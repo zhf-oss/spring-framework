@@ -523,6 +523,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+			/*
+			 * TODO bean生命周期
+			 * 如方法名doCreateBean，执行创建bean示例，返回一个beanInstance示例
+			 */
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Finished creating instance of bean '" + beanName + "'");
@@ -563,6 +567,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			/*
+			 * TODO bean生命周期
+			 * 如方法名createBeanInstance创建bean示例
+			 */
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		Object bean = instanceWrapper.getWrappedInstance();
@@ -597,9 +605,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
+		/**
+		 * TODO bean生命周期，对象赋值操作
+		 * 上面已经实例化bean，这里是对bean的属性进行赋值
+		 * populateBean(beanName, mbd, instanceWrapper)
+		 */
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
+			// 赋值操作
 			populateBean(beanName, mbd, instanceWrapper);
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
@@ -1193,7 +1207,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return autowireConstructor(beanName, mbd, ctors, null);
 		}
 
-		// No special handling: simply use no-arg constructor.
+		/*
+		 * TODO bean生命周期
+		 * 没有特殊处理：只需使用无参数构造函数
+		 */
 		return instantiateBean(beanName, mbd);
 	}
 
@@ -1296,6 +1313,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	protected BeanWrapper instantiateBean(String beanName, RootBeanDefinition mbd) {
 		try {
+			/*
+			 * TODO bean生命周期
+			 * 执行得到bean实例，点进去 instantiate(mbd, beanName, this) 方法
+			 */
 			Object beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, this);
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
 			initBeanWrapper(bw);
@@ -1411,6 +1432,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (pvs != null) {
+			/**
+			 * TODO bean生命周期，对象赋值操作
+			 */
 			applyPropertyValues(beanName, mbd, bw, pvs);
 		}
 	}
@@ -1648,6 +1672,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Create a deep copy, resolving any references for values.
 		List<PropertyValue> deepCopy = new ArrayList<>(original.size());
 		boolean resolveNecessary = false;
+		/**
+		 * TODO bean生命周期，对象赋值操作
+		 * 遍历赋值操作
+		 */
 		for (PropertyValue pv : original) {
 			if (pv.isConverted()) {
 				deepCopy.add(pv);
@@ -1693,8 +1721,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			mpvs.setConverted();
 		}
 
+		/*
+		 * TODO bean生命周期，对象赋值操作
+		 * 设置我们的（可能是经过按摩的）深拷贝。
+		 */
 		// Set our (possibly massaged) deep copy.
 		try {
+			// 填充值
 			bw.setPropertyValues(new MutablePropertyValues(deepCopy));
 		}
 		catch (BeansException ex) {
